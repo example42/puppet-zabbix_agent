@@ -18,20 +18,18 @@ class zabbix_agent::params {
 
   $install_prerequisites = true
   $create_user           = true
-  $install               = 'source'
-  $java_opts             = undef
+  $install               = 'package'
 
   $install_source        = ''
   $install_destination   = '/opt'
-  $init_config_template  = 'zabbix_agent/zabbix_agent.conf.erb'
   $init_script_template  = 'zabbix_agent/zabbix_agent.init.erb'
 
   $package = $::operatingsystem ? {
-    default => 'zabbix_agent',
+    default => 'zabbix-agent',
   }
 
   $service = $::operatingsystem ? {
-    default => 'zabbix_agent',
+    default => 'zabbix-agent',
   }
 
   $service_status = $::operatingsystem ? {
@@ -39,19 +37,19 @@ class zabbix_agent::params {
   }
 
   $process = $::operatingsystem ? {
-    default => 'java',
+    default => 'zabbix_agentd',
   }
 
   $process_args = $::operatingsystem ? {
-    default => 'zabbix_agent',
+    default => '',
   }
 
   $process_user = $::operatingsystem ? {
-    default => 'zabbix_agent',
+    default => 'zabbix',
   }
 
   $process_group = $::operatingsystem ? {
-    default => 'zabbix_agent',
+    default => 'zabbix',
   }
 
   $config_dir = $::operatingsystem ? {
@@ -74,28 +72,23 @@ class zabbix_agent::params {
     default => 'root',
   }
 
-  $config_file_init = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => '/etc/default/zabbix_agent',
-    default                   => '/etc/sysconfig/zabbix_agent',
-  }
-
   $pid_file = $::operatingsystem ? {
-    default => '/var/run/zabbix_agent.pid',
+    default => '/var/run/zabbix/zabbix_agentd.pid',
   }
 
   $data_dir = $::operatingsystem ? {
-    default => '/etc/zabbix_agent',
+    default => '',
   }
 
   $log_dir = $::operatingsystem ? {
-    default => '/var/log/zabbix_agent',
+    default => '/var/log/zabbix',
   }
 
   $log_file = $::operatingsystem ? {
-    default => '/var/log/zabbix_agent/zabbix_agent.log',
+    default => '/var/log/zabbix/zabbix_agentd.log',
   }
 
-  $port = '9200'
+  $port = '10050'
   $protocol = 'tcp'
 
   # General Settings
@@ -106,7 +99,7 @@ class zabbix_agent::params {
   $template = ''
   $options = ''
   $service_autorestart = true
-  $version = '0.20.6'
+  $version = 'present'
   $absent = false
   $disable = false
   $disableboot = false

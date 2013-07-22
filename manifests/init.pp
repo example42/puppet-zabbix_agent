@@ -5,6 +5,9 @@
 #
 # == Parameters
 #
+# [*server*]
+#   Ip of the Zabbix server
+#
 # [*install_prerequisites*]
 #   Set to false if you don't want install this module's prerequisites.
 #   (It may be useful if the resources provided the prerequisites are already
@@ -36,11 +39,8 @@
 #   Used if install => "source" or "puppi"
 #   Can be defined also by the variable $zabbix_agent_install_destination
 #
-# [*init_config_template*]
-#   Template file used for /etc/sysconfig|default/zabbix_agent
-#
 # [*init_script_template*]
-#   Template file used for /etc/init.d/zabbix_agent
+#   Template file used for /etc/init.d/zabbix-agent
 #
 # [*my_class*]
 #   Name of a custom class to autoload to manage module's customizations
@@ -217,9 +217,6 @@
 # [*config_file_group*]
 #   Main configuration file path group
 #
-# [*config_file_init*]
-#   Path of configuration file sourced by init script
-#
 # [*pid_file*]
 #   Path of pid file. Used by monitor
 #
@@ -247,14 +244,13 @@
 # See README for usage patterns.
 #
 class zabbix_agent (
+  $server                = params_lookup( 'server' ),
   $install_prerequisites = params_lookup( 'install_prerequisites' ),
   $create_user           = params_lookup( 'create_user' ),
   $install               = params_lookup( 'install' ),
   $install_source        = params_lookup( 'install_source' ),
   $install_destination   = params_lookup( 'install_destination' ),
-  $init_config_template  = params_lookup( 'init_config_template' ),
   $init_script_template  = params_lookup( 'init_script_template' ),
-  $java_opts             = params_lookup( 'java_opts' ),
   $my_class              = params_lookup( 'my_class' ),
   $source                = params_lookup( 'source' ),
   $source_dir            = params_lookup( 'source_dir' ),
@@ -293,7 +289,6 @@ class zabbix_agent (
   $config_file_mode      = params_lookup( 'config_file_mode' ),
   $config_file_owner     = params_lookup( 'config_file_owner' ),
   $config_file_group     = params_lookup( 'config_file_group' ),
-  $config_file_init      = params_lookup( 'config_file_init' ),
   $pid_file              = params_lookup( 'pid_file' ),
   $data_dir              = params_lookup( 'data_dir' ),
   $log_dir               = params_lookup( 'log_dir' ),
@@ -397,8 +392,15 @@ class zabbix_agent (
   }
 
   ### Internal vars depending on user's input
+  $os_string = $::kernel ? {
+    'Linux'   => 'linux',
+    'SunOS'   => 'solaris',
+    'windows' => 'win',
+  }
+  $os_version = regsubst($::kernelmajversion, '.' , '_' )
+
   $real_install_source = $zabbix_agent::install_source ? {
-    ''      => "https://download.zabbix_agent.org/zabbix_agent/zabbix_agent/zabbix_agent-${zabbix_agent::version}.zip",
+    ''      => "http://www.zabbix.com/downloads/${version}/zabbix_agents_${version}.${os_string}${os_version}.${::architecture}.tar.gz",
     default => $zabbix_agent::install_source,
   }
   $created_dirname = url_parse($zabbix_agent::real_install_source,'filedir')
@@ -406,16 +408,16 @@ class zabbix_agent (
 
   $real_config_file = $zabbix_agent::config_file ? {
     ''      => $zabbix_agent::install ? {
-      package => '/etc/zabbix_agent/zabbix_agent.yml',
-      default => "${zabbix_agent::home}/config/zabbix_agent.yml",
+      package => '/etc/zabbix/zabbix_agentd.conf',
+      default => "${zabbix_agent::home}/conf/zabbix_agentd.conf",
     },
     default => $zabbix_agent::config_file,
   }
 
   $real_config_dir = $zabbix_agent::config_dir ? {
     ''      => $zabbix_agent::install ? {
-      package => '/etc/zabbix_agent/',
-      default => "${zabbix_agent::home}/config/",
+      package => '/etc/zabbix/',
+      default => "${zabbix_agent::home}/conf/",
     },
     default => $zabbix_agent::config_dir,
   }
@@ -433,7 +435,8 @@ class zabbix_agent (
     ''      => $zabbix_agent::package_source ? {
       ''      => undef,
       default => $::operatingsystem ? {
-          /(?i:Debian|Ubuntu|Mint)/ => 'dpkg',
+          /(?i:Debian|Ubuntu|Mint)/     => 'dpkg',
+          /(?i:RedHat|Centos|Scienfic)/ => 'rpm',
           default                   => undef,
       },
     },
