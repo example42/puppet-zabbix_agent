@@ -8,8 +8,6 @@ Official site: http://www.example42.com
 
 Official git repository: http://github.com/example42/puppet-zabbix_agent
 
-Module development sponsored by [AllOver.IO](http://www.allover.io)
-
 Released under the terms of Apache 2 License.
 
 This module requires functions provided by the Example42 Puppi module (you need it even if you don't use and install Puppi)
@@ -19,30 +17,54 @@ For detailed info about the logic and usage patterns of Example42 modules check 
 
 ## USAGE - Basic management
 
-* Install zabbix_agent with default settings, that is installation from official site, run as zabbix_agent user, usage of Tanuki wrappers (retrived via git) for service management
+* Install zabbix_agent with default settings, that is installation from OS default packages
 
         class { 'zabbix_agent': }
 
 * Install a specific version of zabbix_agent package.
 
         class { 'zabbix_agent':
-          version => '0.20.2',
+          version => '2.0.6',
         }
 
-* Provide a custom template for init script, its tanuki configuration file and zabbix_agent's own config file
+* Install zabbix_agent from upstream tarball (you MUST provide a version with this option)
 
         class { 'zabbix_agent':
+          install => 'source',
+          version => '2.0.6',
+        }
+
+* Install zabbix_agent from upstream tarball and provide a custom template for the service's init script
+
+        class { 'zabbix_agent':
+          install => 'source',
+          version => '2.0.6',
           init_script_template  => 'site/zabbix_agent/zabbix_agent.init.erb',
-          init_config_template  => 'site/zabbix_agent/zabbix_agent.conf.erb',
-          template              => 'site/zabbix_agent/zabbix_agent.yml.erb',
         }
 
-* Install without creating elastisearch user and providing in custom ways the modules' prerequisites. Note: Be user to have user and prerequisites created before zabbix_agent
+* Install zabbix_agent from a custom source to a custom destination
 
         class { 'zabbix_agent':
-          install_prerequisites  => false,
+          install             => 'source',
+          install_source      => 'http://download.example42.com/software/zabbix_agents_2.0.6.solaris10.amd64.tar.gz',
+          install_destination => '/usr/local', # Default: '/opt'
+        }
+
+
+* Install from source without creating a dedicated zabbix user 
+
+        class { 'zabbix_agent':
+          install => 'source',
+          version => '2.0.6',
           create_user            => false,
         }
+
+* Provide a custom class for the module's prerequisites (check if they apply to your case)
+
+        class { 'zabbix_agent':
+          dependency_class => 'site::pre_zabbix_agent',
+        }
+
 
 * Disable zabbix_agent service.
 

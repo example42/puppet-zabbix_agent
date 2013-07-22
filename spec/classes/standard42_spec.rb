@@ -4,10 +4,13 @@ describe 'zabbix_agent' do
 
   let(:title) { 'zabbix_agent' }
   let(:node) { 'rspec.example42.com' }
-  let(:facts) { { :ipaddress => '10.42.42.42' } }
+  let(:facts) {
+    { :ipaddress => '10.42.42.42' ,
+      :kernel    => 'Linux' }
+  }
 
   describe 'Test standard installation' do
-    it { should contain_puppi__netinstall('netinstall_zabbix_agent') }
+    it { should contain_package('zabbix_agent') }
     it { should contain_service('zabbix_agent').with_ensure('running') }
     it { should contain_service('zabbix_agent').with_enable('true') }
     it { should contain_file('zabbix_agent.conf').with_ensure('present') }
@@ -33,13 +36,21 @@ describe 'zabbix_agent' do
 
   describe 'Test custom package source on debian should automatically set the version to present if not specified otherwise' do
     let(:params) { {:package_source => 'http://example42.com/zabbix_agent.deb', :install => 'package'} }
-    let(:facts) { {:operatingsystem => 'Debian'} }
+    let(:facts) {
+    { :ipaddress => '10.42.42.42' ,
+      :operatingsystem => 'Debian' ,
+      :kernel    => 'Linux' }
+    }
     it { should contain_package('zabbix_agent').with_ensure('present') }
   end
 
   describe 'Test custom package source on debian should automatically set the package provider to dpkg if not specified otherwise' do
     let(:params) { {:package_source => 'http://example42.com/zabbix_agent.deb', :install => 'package'} }
-    let(:facts) { {:operatingsystem => 'Debian'} }
+    let(:facts) {
+    { :ipaddress => '10.42.42.42' ,
+      :operatingsystem => 'Debian' ,
+      :kernel    => 'Linux' }
+    }
     it { should contain_package('zabbix_agent').with_provider('dpkg') }
   end
 
@@ -50,7 +61,7 @@ describe 'zabbix_agent' do
 
   describe 'Test standard installation with monitoring and firewalling' do
     let(:params) { {:install => 'package', :monitor => true , :firewall => true, :port => '42', :protocol => 'tcp' } }
-    it { should contain_package('zabbix_agent').with_ensure('0.20.6') }
+    it { should contain_package('zabbix_agent').with_ensure('present') }
     it { should contain_service('zabbix_agent').with_ensure('running') }
     it { should contain_service('zabbix_agent').with_enable('true') }
     it { should contain_file('zabbix_agent.conf').with_ensure('present') }
@@ -70,7 +81,7 @@ describe 'zabbix_agent' do
 
   describe 'Test decommissioning - disable' do
     let(:params) { {:install => 'package', :disable => true, :monitor => true , :firewall => true, :port => '42', :protocol => 'tcp'} }
-    it { should contain_package('zabbix_agent').with_ensure('0.20.6') }
+    it { should contain_package('zabbix_agent').with_ensure('present') }
     it 'should stop Service[zabbix_agent]' do should contain_service('zabbix_agent').with_ensure('stopped') end
     it 'should not enable at boot Service[zabbix_agent]' do should contain_service('zabbix_agent').with_enable('false') end
     it { should contain_file('zabbix_agent.conf').with_ensure('present') }
@@ -80,7 +91,7 @@ describe 'zabbix_agent' do
 
   describe 'Test decommissioning - disableboot' do
     let(:params) { {:install => 'package', :disableboot => true, :monitor => true , :firewall => true, :port => '42', :protocol => 'tcp'} }
-    it { should contain_package('zabbix_agent').with_ensure('0.20.6') }
+    it { should contain_package('zabbix_agent').with_ensure('present') }
     it { should_not contain_service('zabbix_agent').with_ensure('present') }
     it { should_not contain_service('zabbix_agent').with_ensure('absent') }
     it 'should not enable at boot Service[zabbix_agent]' do should contain_service('zabbix_agent').with_enable('false') end
@@ -125,7 +136,7 @@ describe 'zabbix_agent' do
   end
 
   describe 'Test customizations - custom class' do
-    let(:params) { {:my_class => "zabbix_agent::spec" } }
+    let(:params) { {:my_class => "zabbix_agent::spec" , :options => { 'opt_a' => 'value_a' } } }
     it { should contain_file('zabbix_agent.conf').with_content(/rspec.example42.com/) }
   end
 
@@ -160,25 +171,46 @@ describe 'zabbix_agent' do
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :monitor => true , :ipaddress => '10.42.42.42' } }
+    let(:facts) { 
+    { :ipaddress => '10.42.42.42' ,
+      :operatingsystem => 'Debian' ,
+      :monitor => true ,
+      :kernel    => 'Linux' }
+    }
     let(:params) { { :port => '42' } }
     it 'should honour top scope global vars' do should contain_monitor__process('zabbix_agent_process').with_enable('true') end
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :zabbix_agent_monitor => true , :ipaddress => '10.42.42.42' } }
+    let(:facts) { 
+    { :ipaddress => '10.42.42.42' ,
+      :operatingsystem => 'Debian' ,
+      :zabbix_agent_monitor => false ,
+      :kernel    => 'Linux' }
+    }
     let(:params) { { :port => '42' } }
     it 'should honour module specific vars' do should contain_monitor__process('zabbix_agent_process').with_enable('true') end
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :monitor => false , :zabbix_agent_monitor => true , :ipaddress => '10.42.42.42' } }
+    let(:facts) { 
+    { :ipaddress => '10.42.42.42' ,
+      :operatingsystem => 'Debian' ,
+      :_monitor => false ,
+      :zabbix_agent_monitor => true ,
+      :kernel    => 'Linux' }
+    }
     let(:params) { { :port => '42' } }
     it 'should honour top scope module specific over global vars' do should contain_monitor__process('zabbix_agent_process').with_enable('true') end
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :monitor => false , :ipaddress => '10.42.42.42' } }
+    let(:facts) {
+    { :ipaddress => '10.42.42.42' ,
+      :operatingsystem => 'Debian' ,
+      :monitor => false ,
+      :kernel    => 'Linux' }
+    }
     let(:params) { { :monitor => true , :firewall => true, :port => '42' } }
     it 'should honour passed params over global vars' do should contain_monitor__process('zabbix_agent_process').with_enable('true') end
   end

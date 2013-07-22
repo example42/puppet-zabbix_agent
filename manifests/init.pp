@@ -8,11 +8,13 @@
 # [*server*]
 #   Ip of the Zabbix server
 #
-# [*install_prerequisites*]
-#   Set to false if you don't want install this module's prerequisites.
-#   (It may be useful if the resources provided the prerequisites are already
-#   managed by some other modules). Default: true
-#   Prerequisites are based on Example42 modules set.
+# [*dependencies_class*]
+#   The name of the class that installs dependencies and prerequisite
+#   resources needed by this module.
+#   Default is $graylog2::dependencies which uses Example42 modules.
+#   Set to '' false to not install any dependency (you must provide what's
+#   defined in graylog2/manifests/dependencies.pp in some way).
+#   Set directy the name of a custom class to manage there the dependencies
 #
 # [*create_user*]
 #   Set to true if you want the module to create the process user of zabbix_agent
@@ -245,7 +247,7 @@
 #
 class zabbix_agent (
   $server                = params_lookup( 'server' ),
-  $install_prerequisites = params_lookup( 'install_prerequisites' ),
+  $dependencies_class    = params_lookup( 'dependencies_class' ),
   $create_user           = params_lookup( 'create_user' ),
   $install               = params_lookup( 'install' ),
   $install_source        = params_lookup( 'install_source' ),
@@ -297,7 +299,6 @@ class zabbix_agent (
   $protocol              = params_lookup( 'protocol' )
   ) inherits zabbix_agent::params {
 
-  $bool_install_prerequisites=any2bool($install_prerequisites)
   $bool_create_user=any2bool($create_user)
   $bool_source_dir_purge=any2bool($source_dir_purge)
   $bool_service_autorestart=any2bool($service_autorestart)
@@ -444,10 +445,9 @@ class zabbix_agent (
   }
 
   ### Managed resources
-
-  if $zabbix_agent::bool_install_prerequisites {
-    class { 'zabbix_agent::prerequisites':
-    }
+  ### DEPENDENCIES class
+  if $zabbix_ageny::dependencies_class != '' {
+    include $zabbix_agent::dependencies_class
   }
 
   class { 'zabbix_agent::install': }
