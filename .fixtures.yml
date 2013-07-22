@@ -1,0 +1,12 @@
+fixtures:
+  repositories:
+    "puppi": "git://github.com/example42/puppi.git"
+    "monitor": "git://github.com/example42/puppet-monitor.git"
+    "firewall": "git://github.com/example42/puppet-firewall.git"
+    "iptables": "git://github.com/example42/puppet-iptables.git"
+    "concat": "git://github.com/example42/puppet-concat.git"
+    "java": "git://github.com/example42/puppet-java.git"
+    "git": "git://github.com/example42/puppet-git.git"
+  symlinks:
+    "zabbix_agent": "#{source_dir}"
+
