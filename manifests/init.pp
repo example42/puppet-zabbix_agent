@@ -398,14 +398,20 @@ class zabbix_agent (
     'SunOS'   => 'solaris',
     'windows' => 'win',
   }
-  $os_version = regsubst($::kernelmajversion, '.' , '_' )
-
+  $os_version = $::kernel ? {
+    'Linux'   => '2_6',
+    default   => regsubst($::kernelmajversion, '.' , '_' , 'G' ),
+  }
+  $os_arch = $::architecture ? {
+    'x86_64' => 'amd64',
+    default  => $::architecture, 
+  }
   $real_install_source = $zabbix_agent::install_source ? {
-    ''      => "http://www.zabbix.com/downloads/${version}/zabbix_agents_${version}.${os_string}${os_version}.${::architecture}.tar.gz",
+    ''      => "http://www.zabbix.com/downloads/${version}/zabbix_agents_${version}.${os_string}${os_version}.${os_arch}.tar.gz",
     default => $zabbix_agent::install_source,
   }
   $created_dirname = url_parse($zabbix_agent::real_install_source,'filedir')
-  $home = "${zabbix_agent::install_destination}/${zabbix_agent::created_dirname}"
+  $home = "${zabbix_agent::install_destination}/zabbix_agent"
 
   $real_config_file = $zabbix_agent::config_file ? {
     ''      => $zabbix_agent::install ? {
@@ -446,7 +452,7 @@ class zabbix_agent (
 
   ### Managed resources
   ### DEPENDENCIES class
-  if $zabbix_ageny::dependencies_class != '' {
+  if $zabbix_agent::dependencies_class != '' {
     include $zabbix_agent::dependencies_class
   }
 

@@ -56,16 +56,20 @@ class zabbix_agent::install {
       }
       puppi::netinstall { 'netinstall_zabbix_agent':
         url                 => $zabbix_agent::real_install_source,
-        destination_dir     => $zabbix_agent::install_destination,
-        owner               => $zabbix_agent::process_user,
-        group               => $zabbix_agent::process_user,
+        destination_dir     => $zabbix_agent::home,
+        extracted_dir       => 'conf',
         noop                => $zabbix_agent::bool_noops,
+        require             => File['zabbix_agent_home'],
       }
 
-      file { 'zabbix_agent_link':
-        ensure => "${zabbix_agent::home}" ,
-        path   => "${zabbix_agent::install_destination}/zabbix_agent",
-        noop   => $zabbix_agent::bool_noops,
+      file { 'zabbix_agent_home':
+        ensure  => directory,
+        path    => "${zabbix_agent::home}",
+        mode    => '0755',
+        owner   => 'root',
+        group   => 'root',
+        audit   => $zabbix_agent::manage_audit,
+        noop    => $zabbix_agent::bool_noops,
       }
     }
 
@@ -76,17 +80,22 @@ class zabbix_agent::install {
 
       puppi::project::archive { 'zabbix_agent':
         source      => $zabbix_agent::real_install_source,
-        deploy_root => $zabbix_agent::install_destination,
+        deploy_root => $zabbix_agent::home,
         user        => $zabbix_agent::process_user,
         auto_deploy => true,
         enable      => true,
         noop        => $zabbix_agent::bool_noops,
+        require     => File['zabbix_agent_home'],
       }
 
-      file { 'zabbix_agent_link':
-        ensure => "${zabbix_agent::home}" ,
-        path   => "${zabbix_agent::install_destination}/zabbix_agent",
-        noop   => $zabbix_agent::bool_noops,
+      file { 'zabbix_agent_home':
+        ensure  => directory,
+        path    => "${zabbix_agent::home}",
+        mode    => '0755',
+        owner   => $zabbix_agent::config_file_owner,
+        group   => $zabbix_agent::config_file_group,
+        audit   => $zabbix_agent::manage_audit,
+        noop    => $zabbix_agent::bool_noops,
       }
 
     }
