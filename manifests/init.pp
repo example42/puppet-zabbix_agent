@@ -247,6 +247,7 @@
 #
 class zabbix_agent (
   $server                = params_lookup( 'server' ),
+  $service_provider      = params_lookup( 'service_provider' ),
   $dependencies_class    = params_lookup( 'dependencies_class' ),
   $create_user           = params_lookup( 'create_user' ),
   $install               = params_lookup( 'install' ),

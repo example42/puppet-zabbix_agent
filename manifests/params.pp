@@ -15,7 +15,7 @@
 class zabbix_agent::params {
 
   ### Application related parameters
-
+  $service_provider      = 'init'
   $dependencies_class    = 'zabbix_agent::dependencies'
   $create_user           = true
   $install               = 'package'
