@@ -22,6 +22,7 @@ class zabbix_agent::config {
     source  => $zabbix_agent::manage_file_source,
     content => $zabbix_agent::manage_file_content,
     replace => $zabbix_agent::manage_file_replace,
+    notify  => $zabbix_agent::manage_service_autorestart,
     audit   => $zabbix_agent::manage_audit,
     noop    => $zabbix_agent::bool_noops,
   }
@@ -36,6 +37,7 @@ class zabbix_agent::config {
       purge   => $zabbix_agent::bool_source_dir_purge,
       force   => $zabbix_agent::bool_source_dir_purge,
       replace => $zabbix_agent::manage_file_replace,
+      notify  => $zabbix_agent::manage_service_autorestart,
       audit   => $zabbix_agent::manage_audit,
       noop    => $zabbix_agent::bool_noops,
     }
