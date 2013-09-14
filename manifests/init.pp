@@ -392,7 +392,7 @@ class zabbix_agent (
     default   => template($zabbix_agent::template),
   }
 
-  ### Internal vars depending on user's input
+  ### Internal vars depending on user's input
   $os_string = $::kernel ? {
     'Linux'   => 'linux',
     'SunOS'   => 'solaris',
@@ -451,7 +451,7 @@ class zabbix_agent (
   }
 
   ### Managed resources
-  ### DEPENDENCIES class
+  ### DEPENDENCIES class
   if $zabbix_agent::dependencies_class != '' {
     include $zabbix_agent::dependencies_class
   }
@@ -472,7 +472,7 @@ class zabbix_agent (
     include $zabbix_agent::my_class
   }
 
-  ### Example42 extensions
+  ### Example42 extensions
   if $zabbix_agent::bool_puppi == true
   or $zabbix_agent::bool_monitor == true
   or $zabbix_agent::bool_firewall == true {
