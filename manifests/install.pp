@@ -57,9 +57,10 @@ class zabbix_agent::install {
       puppi::netinstall { 'netinstall_zabbix_agent':
         url                 => $zabbix_agent::real_install_source,
         destination_dir     => $zabbix_agent::home,
-        extracted_dir       => 'conf',
+        extracted_dir       => $zabbix_agent::created_dir,
         noop                => $zabbix_agent::noops,
         require             => File['zabbix_agent_home'],
+        postextract_command => "${zabbix_agent::home}/${zabbix_agent::created_dir}/configure --enable-agent && make install",
       }
 
       file { 'zabbix_agent_home':
