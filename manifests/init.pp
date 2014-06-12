@@ -41,6 +41,9 @@
 #   Used if install => "source" or "puppi"
 #   Can be defined also by the variable $zabbix_agent_install_destination
 #
+# [*config_dir*]
+#   Name of the directory containing extra configuration files
+#
 # [*init_script_template*]
 #   Template file used for /etc/init.d/zabbix-agent
 #
@@ -253,6 +256,7 @@ class zabbix_agent (
   $install               = params_lookup( 'install' ),
   $install_source        = params_lookup( 'install_source' ),
   $install_destination   = params_lookup( 'install_destination' ),
+  $config_dir            = params_lookup( 'config_dir' ),
   $init_script_template  = params_lookup( 'init_script_template' ),
   $my_class              = params_lookup( 'my_class' ),
   $source                = params_lookup( 'source' ),
@@ -410,7 +414,12 @@ class zabbix_agent (
     ''      => "http://www.zabbix.com/downloads/${version}/zabbix_agents_${version}.${os_string}${os_version}.${os_arch}.tar.gz",
     default => $zabbix_agent::install_source,
   }
-  $created_dirname = url_parse($zabbix_agent::real_install_source,'filedir')
+
+  $created_dirname = $created_dir ? {
+    ''      => url_parse($zabbix_agent::real_install_source,'filedir'),
+    default => $created_dir
+  }
+
   $home = "${zabbix_agent::install_destination}/zabbix_agent"
 
   $real_config_file = $zabbix_agent::config_file ? {
