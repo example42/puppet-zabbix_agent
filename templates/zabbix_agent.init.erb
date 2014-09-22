@@ -1,10 +1,24 @@
 #! /bin/sh
 # File Managed by Puppet
 <% if operatingsystem == 'RedHat' or operatingsystem == 'CentOS' or operatingsystem == 'Scientific' %>
-# zabbix-agent        Startup script for zabbix-agent
+# zabbix-agent		This shell script takes care of starting 
+#                       and stopping Zabbix Agent daemon
 #
-# chkconfig: - 85 15
-# description: zabbix-agent
+# chkconfig: 		35 95 15
+# description: 		zabbix-agent
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+
+RETVAL=0
+
 <% elsif operatingsystem == 'Debian' or operatingsystem == 'Ubuntu' or operatingsystem == 'Mint' %>
 ### BEGIN INIT INFO
 # Provides:          zabbix-agent
@@ -14,54 +28,172 @@
 # Default-Stop:      0 1 6
 # Short-Description: Start/stop zabbix-agent daemon
 ### END INIT INFO
-<% end %>
 
 set -e
 
-NAME=zabbix_agentd
-DAEMON=<%= scope.lookupvar('zabbix_agent::home') %>/sbin/$NAME
-DESC="Zabbix agent"
+<% end %>
 
-test -x $DAEMON || exit 0
-
-DIR=/var/run/zabbix
-PID=$DIR/$NAME.pid
+# Setting up configuration
+ZABBIX_USER="zabbix"
+ZABBIX_NAME=zabbix_agentd
+ZABBIX_DESC="Zabbix agent"
+ZABBIX_CONF="<%= scope.lookupvar('zabbix_agent::home') %>/conf/$ZABBIX_NAME.conf"
+ZABBIX_BIND="<%= scope.lookupvar('zabbix_agent::home') %>/sbin"
+ZABBIX_BINF="$ZABBIX_BIND/$ZABBIX_NAME"
 RETRY=15
 
-if test ! -d "$DIR"; then
-  mkdir "$DIR"
-  chown -R zabbix:zabbix "$DIR"
+
+if [ ! -x $ZABBIX_BINF ] ; then
+    echo "$ZABBIX_BINF not installed! "
+    exit 4
+fi
+
+if [ ! -f $ZABBIX_CONF ]
+then
+    echo "$ZABBIX_NAME configuration file $ZABBIX_CONF does not exist. "
+    exit 3
+fi
+
+# Source config file to load configuration
+. $ZABBIX_CONF
+
+ZABBIX_LOGD="`dirname $LogFile`"
+ZABBIX_LOGF="$LogFile"
+if [ ! -d $ZABBIX_LOGD ] ; then
+  mkdir $ZABBIX_LOGD
+  chown -R zabbix:zabbix $ZABBIX_LOGD
+fi
+if [ -z $ZABBIX_LOGF ]
+then
+    echo "LogFile path is not specified in $ZABBIX_CONF"
+    exit 5
+fi
+
+ZABBIX_PIDD="`dirname $PidFile`"
+ZABBIX_PIDF="$PidFile"
+if [ ! -d $ZABBIX_PIDD ] ; then
+  mkdir $ZABBIX_PIDD
+  chown -R zabbix:zabbix $ZABBIX_PIDD
+fi
+if [ -z $ZABBIX_PIDF ]
+then
+    echo "LogFile path is not specified in $ZABBIX_CONF"
+    exit 5
 fi
 
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+
+
+<% if operatingsystem == 'RedHat' or operatingsystem == 'CentOS' or operatingsystem == 'Scientific' %>
+
+# Functions
+runcheck() {
+    [ ! -f $ZABBIX_PIDF ] && return 0
+    PID=`cat $ZABBIX_PIDF`
+    checkpid $PID
+    [ $? -ne 0 ] && rm -f $ZABBIX_PIDF
+}
+
+pidofzab() {
+    pidofproc -p "$ZABBIX_PIDF" $ZABBIX_NAME
+}
+
+start() {
+    # Start daemons.
+    echo -n $"Starting $ZABBIX_NAME: "
+    if [ -n "`pidofzab`" ]; then
+      echo -n "$ZABBIX_NAME: already running"
+      failure
+      echo
+      return 1
+    fi
+    if [ ! -d $ZABBIX_LOGD ]; then
+      mkdir -p $ZABBIX_LOGD
+      chown $ZABBIX_USER $ZABBIX_LOGD
+    fi
+    runcheck
+    daemon --user $ZABBIX_USER $ZABBIX_BINF -c $ZABBIX_CONF
+    RETVAL=$?
+    if [ -f $ZABBIX_PIDF ]; then
+      chown $ZABBIX_USER $ZABBIX_PIDF
+    fi
+    echo
+    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$ZABBIX_NAME
+    return $RETVAL
+}
+
+stop() {
+    # Stop daemons.
+    echo -n $"Shutting down $ZABBIX_NAME: "
+    killproc $ZABBIX_NAME
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$ZABBIX_NAME
+    return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	stop
+	usleep 1000000
+	start
+	RETVAL=$?
+	;;
+  condrestart)
+	if [ -f /var/lock/subsys/$ZABBIX_NAME ]; then
+	    stop
+	    usleep 1000000
+	    start
+	    RETVAL=$?
+	fi
+	;;
+  status)
+	status $ZABBIX_NAME
+	RETVAL=$?
+	;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|condrestart|status}"
+	exit 1
+esac
+
+exit $RETVAL
+
+<% elsif operatingsystem == 'Debian' or operatingsystem == 'Ubuntu' or operatingsystem == 'Mint' %>
 
 # define LSB log_* functions.
 . /lib/lsb/init-functions
 
 case "$1" in
   start)
-    log_daemon_msg "Starting $DESC" "$NAME"
-  start-stop-daemon --oknodo --start --pidfile $PID --exec $DAEMON >/dev/null 2>&1
+    log_daemon_msg "Starting $ZABBIX_DESC" "$ZABBIX_NAME"
+  start-stop-daemon --oknodo --start --pidfile $ZABBIX_PIDF --exec $ZABBIX_BINF >/dev/null 2>&1
     case "$?" in
         0) log_end_msg 0 ;;
         *) log_end_msg 1; exit 1 ;;
     esac
   ;;
   stop)
-    log_daemon_msg "Stopping $DESC" "$NAME"
-  start-stop-daemon --oknodo --stop --pidfile $PID --exec $DAEMON --retry $RETRY
+    log_daemon_msg "Stopping $ZABBIX_DESC" "$ZABBIX_NAME"
+  start-stop-daemon --oknodo --stop --pidfile $ZABBIX_PIDF --exec $ZABBIX_BINF --retry $RETRY
     case "$?" in
         0) log_end_msg 0 ;;
         *) log_end_msg 1; exit 1 ;;
     esac
   ;;
   status)
-   ls -l /proc/`cat $PID`/exe > /dev/null 2>&1
+   ls -l /proc/`cat $ZABBIX_PIDF`/exe > /dev/null 2>&1
    if [ $? -eq 0 ]; then
-       echo "$DESC is running"
+       echo "$ZABBIX_DESC is running"
        exit 0
    else
-       echo "$DESC is NOT running"
+       echo "$ZABBIX_DESC is NOT running"
        exit 1
    fi
    ;;
@@ -70,10 +202,11 @@ case "$1" in
   $0 start
   ;;
   *)
-    echo "Usage: /etc/init.d/$NAME {start|stop|restart|force-reload}" >&2
+    echo "Usage: /etc/init.d/$ZABBIX_NAME {start|stop|restart|force-reload}" >&2
   exit 1
   ;;
 esac
 
 exit 0
 
+<% end %>
