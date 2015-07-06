@@ -28,7 +28,7 @@ class zabbix_agent::config {
   }
 
   # The whole zabbix_agent configuration directory can be recursively overriden
-  if $zabbix_agent::source_dir {
+  if $zabbix_agent::source_dir != '' {
     file { 'zabbix_agent.dir':
       ensure  => directory,
       path    => $zabbix_agent::real_config_dir,
