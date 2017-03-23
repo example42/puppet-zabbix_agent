@@ -116,6 +116,5 @@ class zabbix_agent::params {
   $puppi_helper = 'standard'
   $debug = false
   $audit_only = false
-  $noops = false
 
 }

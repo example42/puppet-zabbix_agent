@@ -100,17 +100,6 @@ describe 'zabbix_agent' do
     it { should contain_firewall('zabbix_agent_tcp_42').with_enable('true') }
   end
 
-  describe 'Test noops mode' do
-    let(:params) { {:install => 'package', :noops => true, :monitor => true , :firewall => true, :port => '42', :protocol => 'tcp'} }
-    it { should contain_package('zabbix_agent').with_noop('true') }
-    it { should contain_service('zabbix_agent').with_noop('true') }
-    it { should contain_file('zabbix_agent.conf').with_noop('true') }
-    it { should contain_monitor__process('zabbix_agent_process').with_noop('true') }
-    it { should contain_monitor__process('zabbix_agent_process').with_noop('true') }
-    it { should contain_monitor__port('zabbix_agent_tcp_42').with_noop('true') }
-    it { should contain_firewall('zabbix_agent_tcp_42').with_noop('true') }
-  end
-
   describe 'Test customizations - template' do
     let(:params) { {:template => "zabbix_agent/spec.erb" , :options => { 'opt_a' => 'value_a' } } }
     it 'should generate a valid template' do

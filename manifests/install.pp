@@ -46,7 +46,6 @@ class zabbix_agent::install {
         name      => $zabbix_agent::package,
         provider  => $zabbix_agent::real_package_provider,
         source    => $zabbix_agent::real_package_path,
-        noop      => $zabbix_agent::noops,
       }
     }
 
@@ -58,7 +57,6 @@ class zabbix_agent::install {
         url                 => $zabbix_agent::real_install_source,
         destination_dir     => $zabbix_agent::home,
         extracted_dir       => $zabbix_agent::created_dir,
-        noop                => $zabbix_agent::noops,
         require             => File['zabbix_agent_home'],
         postextract_command => "${zabbix_agent::home}/${zabbix_agent::created_dir}/configure --enable-agent && make install",
       }
@@ -70,7 +68,6 @@ class zabbix_agent::install {
         owner   => 'root',
         group   => 'root',
         audit   => $zabbix_agent::manage_audit,
-        noop    => $zabbix_agent::noops,
       }
     }
 
@@ -85,7 +82,6 @@ class zabbix_agent::install {
         user        => $zabbix_agent::process_user,
         auto_deploy => true,
         enable      => true,
-        noop        => $zabbix_agent::noops,
         require     => File['zabbix_agent_home'],
       }
 
@@ -96,7 +92,6 @@ class zabbix_agent::install {
         owner   => $zabbix_agent::config_file_owner,
         group   => $zabbix_agent::config_file_group,
         audit   => $zabbix_agent::manage_audit,
-        noop    => $zabbix_agent::noops,
       }
 
     }

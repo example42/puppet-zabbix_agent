@@ -164,11 +164,6 @@
 #   Can be defined also by the (top scope) variables $zabbix_agent_audit_only
 #   and $audit_only
 #
-# [*noops*]
-#   Set noop metaparameter to true for all the resources managed by the module.
-#   Basically you can run a dryrun for this specific module if you set
-#   this to true. Default: undef
-#
 # [*package_source*]
 #   The URL from where to download the Package (http or puppet)
 #
@@ -280,7 +275,6 @@ class zabbix_agent (
   $firewall_dst          = params_lookup( 'firewall_dst' , 'global' ),
   $debug                 = params_lookup( 'debug' , 'global' ),
   $audit_only            = params_lookup( 'audit_only' , 'global' ),
-  $noops                 = params_lookup( 'noops' ),
   $package               = params_lookup( 'package' ),
   $package_source        = params_lookup( 'package_source' ),
   $package_provider      = params_lookup( 'package_provider' ),

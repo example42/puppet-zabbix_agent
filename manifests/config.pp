@@ -24,7 +24,6 @@ class zabbix_agent::config {
     replace => $zabbix_agent::manage_file_replace,
     notify  => $zabbix_agent::manage_service_autorestart,
     audit   => $zabbix_agent::manage_audit,
-    noop    => $zabbix_agent::noops,
   }
 
   # The whole zabbix_agent configuration directory can be recursively overriden
@@ -39,7 +38,6 @@ class zabbix_agent::config {
       replace => $zabbix_agent::manage_file_replace,
       notify  => $zabbix_agent::manage_service_autorestart,
       audit   => $zabbix_agent::manage_audit,
-      noop    => $zabbix_agent::noops,
     }
   }
 

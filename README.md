@@ -84,12 +84,6 @@ For detailed info about the logic and usage patterns of Example42 modules check 
           audit_only => true
         }
 
-* Module dry-run: Do not make any change on *all* the resources provided by the module
-
-        class { 'zabbix_agent':
-          noops => true
-        }
-
 
 ## USAGE - Overrides and Customizations
 * Use custom sources for main config file 
