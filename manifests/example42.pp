@@ -12,7 +12,6 @@ class zabbix_agent::example42 {
       ensure    => $zabbix_agent::manage_file,
       variables => $classvars,
       helper    => $zabbix_agent::puppi_helper,
-      noop      => $zabbix_agent::noops,
     }
   }
 
@@ -26,7 +25,6 @@ class zabbix_agent::example42 {
         target   => $zabbix_agent::monitor_target,
         tool     => $zabbix_agent::monitor_tool,
         enable   => $zabbix_agent::manage_monitor,
-        noop     => $zabbix_agent::noops,
       }
     }
     if $zabbix_agent::service != '' {
@@ -38,7 +36,6 @@ class zabbix_agent::example42 {
         argument => $zabbix_agent::process_args,
         tool     => $zabbix_agent::monitor_tool,
         enable   => $zabbix_agent::manage_monitor,
-        noop     => $zabbix_agent::noops,
       }
     }
   }
@@ -55,7 +52,6 @@ class zabbix_agent::example42 {
       direction   => 'input',
       tool        => $zabbix_agent::firewall_tool,
       enable      => $zabbix_agent::manage_firewall,
-      noop        => $zabbix_agent::noops,
     }
   }
 

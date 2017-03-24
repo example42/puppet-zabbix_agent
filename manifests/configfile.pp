@@ -42,7 +42,6 @@ define zabbix_agent::configfile (
     content => template($template),
     replace => $zabbix_agent::manage_file_replace,
     audit   => $zabbix_agent::manage_audit,
-    noop    => $zabbix_agent::noops,
   }
 
 }

@@ -21,7 +21,7 @@ class zabbix_agent::dependencies {
       'Linux': {
         file { "/etc/init.d/${zabbix_agent::service}":
           ensure  => present,
-          mode    => 0755,
+          mode    => '0755',
           owner   => 'root',
           group   => 'root',
           content => template($zabbix_agent::init_script_template),
