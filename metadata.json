@@ -1,10 +1,10 @@
 {
   "name": "example42-zabbix_agent",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "example42",
   "summary": "",
   "license": "Apache-2.0",
-  "source": "",
+  "source": "https://github.com/example42/puppet-zabbiz_agent.git",
   "dependencies": [
 
   ],
@@ -12,7 +12,8 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -24,7 +25,8 @@
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -36,7 +38,8 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "8"
+        "8",
+        "9"
       ]
     },
     {
@@ -48,6 +51,7 @@
     {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
+        "11",
         "12"
       ]
     }
@@ -55,7 +59,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.7.0 < 6.0.0"
+      "version_requirement": ">= 4.9.1 < 6.0.0"
     }
   ],
   "pdk-version": "1.5.0",
