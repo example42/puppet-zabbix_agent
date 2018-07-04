@@ -13,6 +13,8 @@
 #
 class zabbix_agent::config {
 
+  $options = $zabbix_agent::options
+
   file { 'zabbix_agent.conf':
     ensure  => $zabbix_agent::manage_file,
     path    => $zabbix_agent::real_config_file,
@@ -33,8 +35,8 @@ class zabbix_agent::config {
       path    => $zabbix_agent::real_config_dir,
       source  => $zabbix_agent::source_dir,
       recurse => true,
-      purge   => $zabbix_agent::bool_source_dir_purge,
-      force   => $zabbix_agent::bool_source_dir_purge,
+      purge   => $zabbix_agent::source_dir_purge,
+      force   => $zabbix_agent::source_dir_purge,
       replace => $zabbix_agent::manage_file_replace,
       notify  => $zabbix_agent::manage_service_autorestart,
       audit   => $zabbix_agent::manage_audit,

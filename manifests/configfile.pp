@@ -25,9 +25,9 @@
 #
 define zabbix_agent::configfile (
   $template ,
-  $ensure   = present,
-  $options  = '' ,
-  $ensure  = present ) {
+  $options = '' ,
+  $ensure  = present,
+) {
 
   include zabbix_agent
 

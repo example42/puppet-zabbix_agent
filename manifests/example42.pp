@@ -6,7 +6,7 @@
 class zabbix_agent::example42 {
 
   ### Provide puppi data, if enabled ( puppi => true )
-  if $zabbix_agent::bool_puppi == true {
+  if $zabbix_agent::puppi {
     $classvars=get_class_args()
     puppi::ze { 'zabbix_agent':
       ensure    => $zabbix_agent::manage_file,
@@ -17,7 +17,7 @@ class zabbix_agent::example42 {
 
 
   ### Service monitoring, if enabled ( monitor => true )
-  if $zabbix_agent::bool_monitor == true {
+  if $zabbix_agent::monitor {
     if $zabbix_agent::port != '' {
       monitor::port { "zabbix_agent_${zabbix_agent::protocol}_${zabbix_agent::port}":
         protocol => $zabbix_agent::protocol,
@@ -27,7 +27,7 @@ class zabbix_agent::example42 {
         enable   => $zabbix_agent::manage_monitor,
       }
     }
-    if $zabbix_agent::service != '' {
+    if $zabbix_agent::service {
       monitor::process { 'zabbix_agent_process':
         process  => $zabbix_agent::process,
         service  => $zabbix_agent::service,
@@ -42,7 +42,7 @@ class zabbix_agent::example42 {
 
 
   ### Firewall management, if enabled ( firewall => true )
-  if $zabbix_agent::bool_firewall == true and $zabbix_agent::port != '' {
+  if $zabbix_agent::firewall and $zabbix_agent::port != '' {
     firewall { "zabbix_agent_${zabbix_agent::protocol}_${zabbix_agent::port}":
       source      => $zabbix_agent::firewall_src,
       destination => $zabbix_agent::firewall_dst,

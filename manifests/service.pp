@@ -14,12 +14,12 @@
 class zabbix_agent::service {
 
   service { 'zabbix_agent':
-    ensure     => $zabbix_agent::manage_service_ensure,
-    name       => $zabbix_agent::service,
-    enable     => $zabbix_agent::manage_service_enable,
-    hasstatus  => $zabbix_agent::service_status,
-    pattern    => $zabbix_agent::process,
-    provider   => $zabbix_agent::service_provider,
+    ensure    => $zabbix_agent::manage_service_ensure,
+    name      => $zabbix_agent::service,
+    enable    => $zabbix_agent::manage_service_enable,
+    hasstatus => $zabbix_agent::service_status,
+    pattern   => $zabbix_agent::process,
+    provider  => $zabbix_agent::service_provider,
   }
 
 }

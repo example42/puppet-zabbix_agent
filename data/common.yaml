@@ -1,0 +1,58 @@
+---
+#class zabbix_agent::params {
+### Application related parameters
+zabbix_agent::server: 'localhost'
+zabbix_agent::service_provider: 'init'
+zabbix_agent::dependencies_class: 'zabbix_agent::dependencies'
+zabbix_agent::create_user: true
+zabbix_agent::install: 'package'
+zabbix_agent::install_source: ''
+zabbix_agent::install_destination: '/opt'
+zabbix_agent::init_script_template: 'zabbix_agent/zabbix_agent.init.erb'
+zabbix_agent::package: 'zabbix-agent'
+zabbix_agent::package_source: ''
+zabbix_agent::package_provider: ''
+zabbix_agent::package_path: ''
+zabbix_agent::service: 'zabbix-agent'
+zabbix_agent::service_status: true
+zabbix_agent::process: 'zabbix_agentd'
+zabbix_agent::process_args: ''
+zabbix_agent::process_user: 'zabbix'
+zabbix_agent::process_group: 'zabbix'
+zabbix_agent::config_dir: ''
+zabbix_agent::config_file: ''
+zabbix_agent::config_file_mode: '0644'
+zabbix_agent::config_file_owner: 'root'
+zabbix_agent::config_file_group: 'root'
+zabbix_agent::pid_file: '/var/run/zabbix/zabbix_agentd.pid'
+zabbix_agent::data_dir: ''
+zabbix_agent::log_dir: '/var/log/zabbix'
+zabbix_agent::log_file: '/var/log/zabbix/zabbix_agentd.log'
+zabbix_agent::port: '10050'
+zabbix_agent::protocol: 'tcp'
+# General Settings
+zabbix_agent::my_class: ''
+zabbix_agent::source: ''
+zabbix_agent::source_dir: ''
+zabbix_agent::source_dir_purge: false
+zabbix_agent::template: ''
+zabbix_agent::options: {}
+zabbix_agent::service_autorestart: true
+zabbix_agent::version: 'present'
+zabbix_agent::absent: false
+zabbix_agent::disable: false
+zabbix_agent::disableboot: false
+
+### General module variables that can have a site or per module default
+zabbix_agent::monitor: false
+zabbix_agent::monitor_tool: ''
+zabbix_agent::monitor_target: $::ipaddress
+zabbix_agent::firewall: false
+zabbix_agent::firewall_tool: ''
+zabbix_agent::firewall_src: '0.0.0.0/0'
+zabbix_agent::firewall_dst: $::ipaddress
+zabbix_agent::puppi: false
+zabbix_agent::puppi_helper: 'standard'
+zabbix_agent::debug: false
+zabbix_agent::audit_only: false
+
