@@ -16,66 +16,6 @@ describe 'zabbix_agent' do
         it { is_expected.to contain_file('zabbix_agent.conf').with_ensure('present') }
       end
 
-      describe 'Test custom package source http://' do
-        let(:params) do
-          {
-            package_source: 'http://example42.com/zabbix_agent.deb',
-            install: 'package',
-            version: 'present',
-          }
-        end
-
-        it { is_expected.to contain_exec('wget zabbix_agent package') }
-      end
-
-      describe 'Test custom package source puppet://' do
-        let(:params) do
-          {
-            package_source: 'puppet:///files/zabbix_agent.deb',
-            install: 'package',
-            version: 'present',
-          }
-        end
-
-        it { is_expected.to contain_file('zabbix_agent package') }
-      end
-
-      describe 'Test custom package source on debian does automatically set the version to present if not specified otherwise' do
-        let(:params) do
-          {
-            package_source: 'http://example42.com/zabbix_agent.deb',
-            install: 'package',
-          }
-        end
-        let(:facts) do
-          {
-            ipaddress: '10.42.42.42',
-            operatingsystem: 'Debian',
-            kernel: 'Linux',
-          }
-        end
-
-        it { is_expected.to contain_package('zabbix_agent').with_ensure('present') }
-      end
-
-      describe 'Test custom package source on debian does automatically set the package provider to dpkg if not specified otherwise' do
-        let(:params) do
-          {
-            package_source: 'http://example42.com/zabbix_agent.deb',
-            install: 'package',
-          }
-        end
-        let(:facts) do
-          {
-            ipaddress: '10.42.42.42',
-            operatingsystem: 'Debian',
-            kernel: 'Linux',
-          }
-        end
-
-        it { is_expected.to contain_package('zabbix_agent').with_provider('dpkg') }
-      end
-
       describe 'Test installation of a specific version' do
         let(:params) do
           {
@@ -87,31 +27,11 @@ describe 'zabbix_agent' do
         it { is_expected.to contain_package('zabbix_agent').with_ensure('1.0.42') }
       end
 
-      describe 'Test standard installation with monitoring' do
-        let(:params) do
-          {
-            install: 'package',
-            monitor: true,
-            port: '42',
-            protocol: 'tcp',
-          }
-        end
-
-        it { is_expected.to contain_package('zabbix_agent').with_ensure('present') }
-        it { is_expected.to contain_service('zabbix_agent').with_ensure('running') }
-        it { is_expected.to contain_service('zabbix_agent').with_enable('true') }
-        it { is_expected.to contain_file('zabbix_agent.conf').with_ensure('present') }
-        it { is_expected.to contain_monitor__process('zabbix_agent_process').with_enable('true') }
-      end
-
       describe 'Test decommissioning - absent' do
         let(:params) do
           {
             install: 'package',
             absent: true,
-            monitor: true,
-            port: '42',
-            protocol: 'tcp',
           }
         end
 
@@ -127,7 +47,6 @@ describe 'zabbix_agent' do
         it 'does remove zabbix_agent configuration file' do
           is_expected.to contain_file('zabbix_agent.conf').with_ensure('absent')
         end
-        it { is_expected.to contain_monitor__process('zabbix_agent_process').with_enable('false') }
       end
 
       describe 'Test decommissioning - disable' do
@@ -135,9 +54,6 @@ describe 'zabbix_agent' do
           {
             install: 'package',
             disable: true,
-            monitor: true,
-            port: '42',
-            protocol: 'tcp',
           }
         end
 
@@ -149,7 +65,6 @@ describe 'zabbix_agent' do
           is_expected.to contain_service('zabbix_agent').with_enable('false')
         end
         it { is_expected.to contain_file('zabbix_agent.conf').with_ensure('present') }
-        it { is_expected.to contain_monitor__process('zabbix_agent_process').with_enable('false') }
       end
 
       describe 'Test decommissioning - disableboot' do
@@ -157,9 +72,6 @@ describe 'zabbix_agent' do
           {
             install: 'package',
             disableboot: true,
-            monitor: true,
-            port: '42',
-            protocol: 'tcp',
           }
         end
 
@@ -170,7 +82,6 @@ describe 'zabbix_agent' do
           is_expected.to contain_service('zabbix_agent').with_enable('false')
         end
         it { is_expected.to contain_file('zabbix_agent.conf').with_ensure('present') }
-        it { is_expected.to contain_monitor__process('zabbix_agent_process').with_enable('false') }
       end
 
       describe 'Test customizations - template' do
@@ -236,43 +147,6 @@ describe 'zabbix_agent' do
           content = catalogue.resource('file', 'zabbix_agent.conf').send(:parameters)[:notify]
           content.should be_nil
         end
-      end
-
-      describe 'Test Puppi Integration' do
-        let(:params) do
-          {
-            puppi: true,
-            puppi_helper: 'myhelper',
-          }
-        end
-
-        it { is_expected.to contain_puppi__ze('zabbix_agent').with_helper('myhelper') }
-      end
-
-      describe 'Test Monitoring Tools Integration' do
-        let(:params) do
-          {
-            monitor: true,
-            monitor_tool: 'puppi',
-          }
-        end
-
-        it { is_expected.to contain_monitor__process('zabbix_agent_process').with_tool('puppi') }
-      end
-
-      describe 'Test OldGen Module Set Integration' do
-        let(:params) do
-          {
-            monitor: true,
-            monitor_tool: 'puppi',
-            puppi: true,
-            port: '42',
-            protocol: 'tcp',
-          }
-        end
-
-        it { is_expected.to contain_monitor__process('zabbix_agent_process').with_tool('puppi') }
-        it { is_expected.to contain_puppi__ze('zabbix_agent').with_ensure('present') }
       end
     end
   end

@@ -1,6 +1,8 @@
 # Puppet module: zabbix_agent
 
-This is a Puppet module for zabbix_agent based on the third generation layout ("NewGen") of Example42 Puppet Modules.
+Travis {<img src="https://travis-ci.org/example42/puppet-zabbix_agent.png?branch=master" alt="Build Status" />}[https://travis-ci.org/example42/puppet-zabbix_agent]
+
+This is a Puppet module for zabbix_agent compatible with Puppet 4 and newer.
 
 Made by Alessandro Franceschi / Lab42 and Martin Alfke / example42
 
@@ -9,9 +11,6 @@ Official site: http://www.example42.com
 Official git repository: http://github.com/example42/puppet-zabbix_agent
 
 Released under the terms of Apache 2 License.
-
-For detailed info about the logic and usage patterns of Example42 modules check the DOCS directory on Example42 main modules set.
-
 
 ## USAGE - Basic management
 
@@ -52,9 +51,9 @@ For detailed info about the logic and usage patterns of Example42 modules check 
 * Install from source without creating a dedicated zabbix user 
 
         class { 'zabbix_agent':
-          install => 'source',
-          version => '2.0.6',
-          create_user            => false,
+          install     => 'source',
+          version     => '2.0.6',
+          create_user => false,
         }
 
 * Provide a custom class for the module's prerequisites (check if they apply to your case)
@@ -75,13 +74,6 @@ For detailed info about the logic and usage patterns of Example42 modules check 
         class { 'zabbix_agent':
           absent => true
         }
-
-* Enable auditing without without making changes on existing zabbix_agent configuration *files*
-
-        class { 'zabbix_agent':
-          audit_only => true
-        }
-
 
 ## USAGE - Overrides and Customizations
 * Use custom sources for main config file 
@@ -111,37 +103,3 @@ For detailed info about the logic and usage patterns of Example42 modules check 
         }
 
 
-## USAGE - Example42 extensions management 
-* Activate puppi (recommended, but disabled by default)
-
-        class { 'zabbix_agent':
-          puppi    => true,
-        }
-
-* Activate puppi and use a custom puppi_helper template (to be provided separately with a puppi::helper define ) to customize the output of puppi commands 
-
-        class { 'zabbix_agent':
-          puppi        => true,
-          puppi_helper => 'myhelper', 
-        }
-
-* Activate automatic monitoring (recommended, but disabled by default). This option requires the usage of Example42 monitor and relevant monitor tools modules
-
-        class { 'zabbix_agent':
-          monitor      => true,
-          monitor_tool => [ 'nagios' , 'monit' , 'munin' ],
-        }
-
-* Activate automatic firewalling. This option requires the usage of relevant firewall tools modules
-
-        class { 'zabbix_agent':       
-          firewall      => true,
-          firewall_tool => 'iptables',
-          firewall_src  => '10.42.0.0/24',
-          firewall_dst  => $ipaddress_eth0,
-        }
-
-
-## CONTINUOUS TESTING
-
-Travis {<img src="https://travis-ci.org/example42/puppet-zabbix_agent.png?branch=master" alt="Build Status" />}[https://travis-ci.org/example42/puppet-zabbix_agent]

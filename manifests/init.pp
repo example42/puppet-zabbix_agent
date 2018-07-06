@@ -24,19 +24,6 @@
 # [*install*]
 #   Kind of installation to attempt:
 #     - package : Installs zabbix_agent using the OS common packages
-#     - source  : Installs zabbix_agent downloading and extracting a specific
-#                 tarball or zip file
-#     - puppi   : Installs zabbix_agent tarball or file via Puppi, creating the
-#                 "puppi deploy zabbix_agent" command
-#
-# [*install_source*]
-#   The URL from where to retrieve the source archive.
-#   Used if install => "source" or "puppi"
-#   Default is from upstream developer site. Update the version when needed.
-#
-# [*install_destination*]
-#   The base path where to extract the source archive.
-#   Used if install => "source" or "puppi"
 #
 # [*config_dir*]
 #   Name of the directory containing extra configuration files
@@ -92,56 +79,11 @@
 #   Set to 'true' to disable service(s) at boot, without checks if it's running
 #   Use this when the service is managed by a tool like a cluster software
 #
-# [*monitor*]
-#   Set to 'true' to enable monitoring of the services provided by the module
-#
-# [*monitor_tool*]
-#   Define which monitor tools (ad defined in Example42 monitor module)
-#   you want to use for zabbix_agent checks
-#
-# [*monitor_target*]
-#   The Ip address or hostname to use as a target for monitoring tools.
-#   Default is the fact $ipaddress
-#
-# [*puppi*]
-#   Set to 'true' to enable creation of module data files that are used by puppi
-#
-# [*puppi_helper*]
-#   Specify the helper to use for puppi commands. The default for this module
-#   is specified in params.pp and is generally a good choice.
-#   You can customize the output of puppi commands for this module using another
-#   puppi helper. Use the define puppi::helper to create a new custom helper
-#
-# [*firewall*]
-#   Set to 'true' to enable firewalling of the services provided by the module
-#
-# [*firewall_tool*]
-#   Define which firewall tool(s) (ad defined in Example42 firewall module)
-#   you want to use to open firewall for zabbix_agent port(s)
-#
-# [*firewall_src*]
-#   Define which source ip/net allow for firewalling zabbix_agent. Default: 0.0.0.0/0
-#
-# [*firewall_dst*]
-#   Define which destination ip to use for firewalling. Default: $ipaddress
-#
 # [*debug*]
 #   Set to 'true' to enable modules debugging
 #
-# [*audit_only*]
-#   Set to 'true' if you don't intend to override existing configuration files
-#   and want to audit the difference between existing files and the ones
-#   managed by Puppet.
-#
-# [*package_source*]
-#   The URL from where to download the Package (http or puppet)
-#
 # [*package_provider*]
 #   The Provider to use for the package resource
-#
-# [*package_path*]
-#   The Path where to save the Package for installation
-#
 #
 # Default class params - As defined in zabbix_agent::params.
 # Note that these variables are mostly defined and used in the module itself,
@@ -162,7 +104,7 @@
 #   The name of zabbix_agent process
 #
 # [*process_args*]
-#   The name of zabbix_agent arguments. Used by puppi and monitor.
+#   The name of zabbix_agent arguments.
 #   Used only in case the zabbix_agent process name is generic (java, ruby...)
 #
 # [*process_user*]
@@ -172,7 +114,7 @@
 #   The name of the group zabbix_agent runs with.
 #
 # [*config_dir*]
-#   Main configuration directory. Used by puppi
+#   Main configuration directory.
 #
 # [*config_file*]
 #   Main configuration file path
@@ -186,97 +128,58 @@
 # [*config_file_group*]
 #   Main configuration file path group
 #
-# [*pid_file*]
-#   Path of pid file. Used by monitor
-#
 # [*data_dir*]
-#   Path of application data directory. Used by puppi
+#   Path of application data directory.
 #
 # [*log_dir*]
-#   Base logs directory. Used by puppi
+#   Base logs directory.
 #
 # [*log_file*]
-#   Log file(s). Used by puppi
-#
-# [*port*]
-#   The listening port, if any, of the service.
-#   This is used by monitor, firewall and puppi (optional) components
-#   Note: This doesn't necessarily affect the service configuration file
-#
-# [*protocol*]
-#   The protocol used by the the service.
-#   This is used by monitor, firewall and puppi (optional) components
-#
+#   Log file(s).
 #
 # See README for usage patterns.
 #
 class zabbix_agent (
-  $server,
-  $service_provider,
-  $dependencies_class,
-  Boolean $create_user,
-  $install,
-  $install_source,
-  $install_destination,
-  $init_script_template,
-  $my_class,
-  String $source,
-  $source_dir,
-  Boolean $source_dir_purge,
-  String $template,
-  Boolean $service_autorestart,
-  Hash $options,
-  $version,
-  Boolean $absent,
-  Boolean $disable,
-  Boolean $disableboot,
-  Boolean $monitor,
-  $monitor_tool,
-  $monitor_target,
-  Boolean $puppi,
-  $puppi_helper,
-  Boolean $firewall,
-  $firewall_tool,
-  $firewall_src,
-  $firewall_dst,
-  Boolean $debug,
-  Boolean $audit_only,
-  $package,
-  $package_source,
-  $package_provider,
-  $package_path,
-  $service,
-  $service_status,
-  $process,
-  $process_args,
-  $process_user,
-  $process_group,
-  $config_dir,
-  $config_file,
-  $config_file_mode,
-  $config_file_owner,
-  $config_file_group,
-  $pid_file,
-  $data_dir,
-  $log_dir,
-  $log_file,
-  $port,
-  $protocol,
+  $server = 'localhost',
+  $service_provider = 'init',
+  $dependencies_class = 'zabbix_agent::dependencies',
+  Boolean $create_user = true,
+  $install = 'package',
+  $init_script_template = 'zabbix_agent/zabbix_agent.init.erb',
+  $my_class = '',
+  String $source = '',
+  $source_dir = '',
+  Boolean $source_dir_purge = false,
+  String $template = '',
+  Boolean $service_autorestart = true,
+  Hash $options = {},
+  $version = 'present',
+  Boolean $absent = false,
+  Boolean $disable = false,
+  Boolean $disableboot = false,
+  Boolean $debug = false,
+  $package = 'zabbix-agent',
+  $package_provider = '',
+  $service = 'zabbix-agent',
+  Boolean $service_status = true,
+  $process = 'zabbix_agentd',
+  $process_args = '',
+  $process_user = 'zabbix',
+  $process_group = 'zabbix',
+  $config_dir = '',
+  $config_file = '',
+  $config_file_mode = '0644',
+  $config_file_owner = 'root',
+  $config_file_group = 'root',
+  $data_dir = '',
+  $log_dir = '/var/log/zabbix',
+  $log_file = '/var/log/zabbix/zabbix_agentd.log',
 ){
 
   ### Definition of some variables used in the module
   $manage_package = $absent ? {
     true  => 'absent',
-    false => $install ? {
-      package => $package_source ? {
-        ''      => $version,
-        default => $::operatingsystem ? {
-          /(?i:Debian|Ubuntu|Mint)/ => 'present',
-          default                   => $version,
-        },
-      },
-      default => $version,
-    },
+    false => $version,
   }
 
   $manage_service_enable = $disableboot ? {
@@ -308,28 +211,6 @@ class zabbix_agent (
     default => 'present',
   }
 
-  if $absent or $disable or $disableboot {
-    $manage_monitor = false
-  } else {
-    $manage_monitor = true
-  }
-
-  if $absent or $disable {
-    $manage_firewall = false
-  } else {
-    $manage_firewall = true
-  }
-
-  $manage_audit = $audit_only ? {
-    true  => 'all',
-    false => undef,
-  }
-
-  $manage_file_replace = $audit_only ? {
-    true  => false,
-    false => true,
-  }
-
   $manage_file_source = $source ? {
     ''       => undef,
     default  => $source,
@@ -354,46 +235,22 @@ class zabbix_agent (
     'x86_64' => 'amd64',
     default  => $::architecture,
   }
-  $real_install_source = $install_source ? {
-    undef   => "http://www.zabbix.com/downloads/${version}/zabbix_agents_${version}.${os_string}${os_version}.${os_arch}.tar.gz",
-    default => $install_source,
-  }
-
-  $home = "${install_destination}/zabbix_agent"
 
   $real_config_file = $config_file ? {
-    ''     => $install ? {
-      package => '/etc/zabbix/zabbix_agentd.conf',
-      default => "${home}/conf/zabbix_agentd.conf",
-    },
+    ''      => '/etc/zabbix/zabbix_agentd.conf',
     default => $config_file,
   }
 
   $real_config_dir = $config_dir ? {
-    ''     => $install ? {
-      package => '/etc/zabbix/',
-      default => "${home}/conf/",
-    },
+    ''      => '/etc/zabbix/',
     default => $config_dir,
   }
 
-  $package_filename = url_parse($package_source, 'filename')
-  $real_package_path = $package_path ? {
-    ''      => $package_source ? {
-      ''      => undef,
-      default => "${install_destination}/${package_filename}",
-    },
-    default => $package_path,
-  }
-
   $real_package_provider = $package_provider ? {
-    ''      => $package_source ? {
-      ''      => undef,
-      default => $::operatingsystem ? {
-          /(?i:Debian|Ubuntu|Mint)/     => 'dpkg',
-          /(?i:RedHat|Centos|Scienfic)/ => 'rpm',
-          default                   => undef,
-      },
+    ''      => $::operatingsystem ? {
+      /(?i:Debian|Ubuntu|Mint)/     => 'dpkg',
+      /(?i:RedHat|Centos|Scienfic)/ => 'rpm',
+      default                       => undef,
     },
     default => $package_provider,
   }
@@ -418,11 +275,6 @@ class zabbix_agent (
   ### Include custom class if $my_class is set
   if $my_class != '' {
     include $my_class
-  }
-
-  ### Example42 extensions
-  if $puppi or $monitor or $firewall {
-    class { 'zabbix_agent::example42': }
   }
 
   ### Debug

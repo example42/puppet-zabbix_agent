@@ -40,8 +40,6 @@ define zabbix_agent::configfile (
     require => Package[$zabbix_agent::package],
     notify  => $zabbix_agent::manage_service_autorestart,
     content => template($template),
-    replace => $zabbix_agent::manage_file_replace,
-    audit   => $zabbix_agent::manage_audit,
   }
 
 }
