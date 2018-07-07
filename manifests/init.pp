@@ -5,137 +5,63 @@
 #
 # == Parameters
 #
-# [*server*]
-#   Ip of the Zabbix server
-#
-# [*dependencies_class*]
-#   The name of the class that installs dependencies and prerequisite
-#   resources needed by this module.
-#   Default is $graylog2::dependencies which uses Example42 modules.
+# @param server Ip of the Zabbix server
+# @param dependencies_class The name of the class that installs dependencies
+#   and prerequisite resources needed by this module.
+#   Default is $zabbix_agent::dependencies.
 #   Set to '' false to not install any dependency (you must provide what's
-#   defined in graylog2/manifests/dependencies.pp in some way).
+#   defined in zabbix_agent/manifests/dependencies.pp in some way).
 #   Set directy the name of a custom class to manage there the dependencies
-#
-# [*create_user*]
-#   Set to true if you want the module to create the process user of zabbix_agent
-#   (as defined in $logstagh::process_user). Default: true
+# @param create_user Set to true if you want the module to create the process 
+#   user of zabbix_agent. Default: true
 #   Note: User is not created when $zabbix_agent::install is package
-#
-# [*install*]
-#   Kind of installation to attempt:
+# @param install Kind of installation to attempt:
 #     - package : Installs zabbix_agent using the OS common packages
-#
-# [*config_dir*]
-#   Name of the directory containing extra configuration files
-#
-# [*init_script_template*]
-#   Template file used for /etc/init.d/zabbix-agent
-#
-# [*my_class*]
-#   Name of a custom class to autoload to manage module's customizations
+# @param config_dir Name of the directory containing extra configuration files
+# @param init_script_template Template file used for /etc/init.d/zabbix-agent
+# @param my_class Name of a custom class to autoload to manage module's customizations
 #   If defined, zabbix_agent class will automatically "include $my_class"
-#
-# [*source*]
-#   Sets the content of source parameter for main configuration file
+# @param source Sets the content of source parameter for main configuration file
 #   If defined, zabbix_agent main config file will have the param: source => $source
-#
-# [*source_dir*]
-#   If defined, the whole zabbix_agent configuration directory content is retrieved
-#   recursively from the specified source
-#   (source => $source_dir , recurse => true)
-#
-# [*source_dir_purge*]
-#   If set to true (default false) the existing configuration directory is
+# @param source_dir If defined, the whole zabbix_agent configuration directory content is retrieved
+#   recursively from the specified source (source => $source_dir , recurse => true)
+# @param source_dir_purge If set to true (default false) the existing configuration directory is
 #   mirrored with the content retrieved from source_dir
 #   (source => $source_dir , recurse => true , purge => true)
-#
-# [*template*]
-#   Sets the path to the template to use as content for main configuration file
+# @param template Sets the path to the template to use as content for main configuration file
 #   If defined, zabbix_agent main config file has: content => content("$template")
 #   Note source and template parameters are mutually exclusive: don't use both
-#
-# [*options*]
-#   An hash of custom options to be used in templates for arbitrary settings.
-#
-# [*service_autorestart*]
-#   Automatically restarts the zabbix_agent service when there is a change in
+# @param options An hash of custom options to be used in templates for arbitrary settings.
+# @param service_autorestart Automatically restarts the zabbix_agent service when there is a change in
 #   configuration files. Default: true, Set to false if you don't want to
 #   automatically restart the service.
-#
-# [*version*]
-#   The package version, used in the ensure parameter of package type.
+# @param version The package version, used in the ensure parameter of package type.
 #   Default: present. Can be 'latest' or a specific version number.
 #   Note that if the argument absent (see below) is set to true, the
 #   package is removed, whatever the value of version parameter.
-#
-# [*absent*]
-#   Set to 'true' to remove package(s) installed by module
-#
-# [*disable*]
-#   Set to 'true' to disable service(s) managed by module
+# @param absent Set to 'true' to remove package(s) installed by module
+# @param disable Set to 'true' to disable service(s) managed by module
 #   Can be defined also by the (top scope) variable $zabbix_agent_disable
-#
-# [*disableboot*]
-#   Set to 'true' to disable service(s) at boot, without checks if it's running
+# @param disableboot  Set to 'true' to disable service(s) at boot, without checks if it's running
 #   Use this when the service is managed by a tool like a cluster software
-#
-# [*debug*]
-#   Set to 'true' to enable modules debugging
-#
-# [*package_provider*]
-#   The Provider to use for the package resource
-#
-# Default class params - As defined in zabbix_agent::params.
-# Note that these variables are mostly defined and used in the module itself,
-# overriding the default values might not affected all the involved components.
-# Set and override them only if you know what you're doing.
-# Note also that you can't override/set them via top scope variables.
-#
-# [*package*]
-#   The name of zabbix_agent package
-#
-# [*service*]
-#   The name of zabbix_agent service
-#
-# [*service_status*]
-#   If the zabbix_agent service init script supports status argument
-#
-# [*process*]
-#   The name of zabbix_agent process
-#
-# [*process_args*]
-#   The name of zabbix_agent arguments.
+# @param debug Set to 'true' to enable modules debugging
+# @param package_provider The Provider to use for the package resource
+# @param package The name of zabbix_agent package
+# @param service  The name of zabbix_agent service
+# @param service_status If the zabbix_agent service init script supports status argument
+# @param process The name of zabbix_agent process
+# @param process_args The name of zabbix_agent arguments.
 #   Used only in case the zabbix_agent process name is generic (java, ruby...)
-#
-# [*process_user*]
-#   The name of the user zabbix_agent runs with.
-#
-# [*process_group*]
-#   The name of the group zabbix_agent runs with.
-#
-# [*config_dir*]
-#   Main configuration directory.
-#
-# [*config_file*]
-#   Main configuration file path
-#
-# [*config_file_mode*]
-#   Main configuration file path mode
-#
-# [*config_file_owner*]
-#   Main configuration file path owner
-#
-# [*config_file_group*]
-#   Main configuration file path group
-#
-# [*data_dir*]
-#   Path of application data directory.
-#
-# [*log_dir*]
-#   Base logs directory.
-#
-# [*log_file*]
-#   Log file(s).
+# @param process_user The name of the user zabbix_agent runs with.
+# @param process_group The name of the group zabbix_agent runs with.
+# @param config_dir Main configuration directory.
+# @param config_file Main configuration file path
+# @param config_file_mode Main configuration file path mode
+# @param config_file_owner Main configuration file path owner
+# @param config_file_group Main configuration file path group
+# @param data_dir Path of application data directory.
+# @param log_dir Base logs directory.
+# @param log_file Log file(s).
 #
 # See README for usage patterns.
 #
