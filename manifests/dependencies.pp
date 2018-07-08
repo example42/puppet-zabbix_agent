@@ -28,7 +28,7 @@ class zabbix_agent::dependencies {
           before  => Class['zabbix_agent::service'],
         }
       }
-      'SunOS': {
+      default: {
       }
     }
   }
