@@ -1,6 +1,6 @@
 {
   "name": "example42-zabbix_agent",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "author": "example42",
   "summary": "Puppet module for zabbix_agent",
   "license": "Apache-2.0",
@@ -51,7 +51,8 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "16.04"
+        "16.04",
+        "18.04"
       ]
     },
     {
@@ -69,7 +70,7 @@
       "version_requirement": ">= 4.10.0 < 7.0.0"
     }
   ],
-  "pdk-version": "1.11.1",
-  "template-url": "pdk-default#1.11.1",
-  "template-ref": "1.11.1-0-g2ff8c24"
+  "pdk-version": "1.14.0",
+  "template-url": "pdk-default#1.14.0",
+  "template-ref": "1.14.0-0-g1bf3a4e"
 }
