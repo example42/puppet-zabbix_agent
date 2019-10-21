@@ -94,11 +94,11 @@ describe 'zabbix_agent' do
 
         it 'does generate a valid template' do
           content = catalogue.resource('file', 'zabbix_agent.conf').send(:parameters)[:content]
-          content.should match 'fqdn: rspec.example42.com'
+          expect(content).to match('fqdn: rspec.example42.com')
         end
         it 'does generate a template that uses custom options' do
           content = catalogue.resource('file', 'zabbix_agent.conf').send(:parameters)[:content]
-          content.should match 'value_a'
+          expect(content).to match('value_a')
         end
       end
 
@@ -145,7 +145,7 @@ describe 'zabbix_agent' do
 
         it 'does not automatically restart the service, when service_autorestart => false' do
           content = catalogue.resource('file', 'zabbix_agent.conf').send(:parameters)[:notify]
-          content.should be_nil
+          expect(content).to be_nil
         end
       end
     end
