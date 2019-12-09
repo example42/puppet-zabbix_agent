@@ -21,6 +21,7 @@ class zabbix_agent::install {
         ensure   => $zabbix_agent::manage_package,
         name     => $zabbix_agent::package,
         provider => $zabbix_agent::real_package_provider,
+        source   => $zabbix_agent::package_source,
       }
     }
 

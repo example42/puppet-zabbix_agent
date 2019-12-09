@@ -10,6 +10,12 @@ describe 'zabbix_agent' do
       let(:node) { 'rspec.example42.com' }
 
       describe 'Test standard installation' do
+        let(:params) do
+          {
+            package_source: '/opt/package/zabbix_agent.rpm',
+          }
+        end
+
         it { is_expected.to contain_package('zabbix_agent') }
         it { is_expected.to contain_service('zabbix_agent').with_ensure('running') }
         it { is_expected.to contain_service('zabbix_agent').with_enable('true') }
@@ -21,6 +27,7 @@ describe 'zabbix_agent' do
           {
             install: 'package',
             version: '1.0.42',
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
@@ -32,6 +39,7 @@ describe 'zabbix_agent' do
           {
             install: 'package',
             absent: true,
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
@@ -54,6 +62,7 @@ describe 'zabbix_agent' do
           {
             install: 'package',
             disable: true,
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
@@ -72,6 +81,7 @@ describe 'zabbix_agent' do
           {
             install: 'package',
             disableboot: true,
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
@@ -89,6 +99,7 @@ describe 'zabbix_agent' do
           {
             template: 'zabbix_agent/spec.erb',
             options: { 'opt_a' => 'value_a' },
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
@@ -106,6 +117,7 @@ describe 'zabbix_agent' do
         let(:params) do
           {
             source: 'puppet:///modules/zabbix_agent/spec',
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
@@ -117,6 +129,7 @@ describe 'zabbix_agent' do
           {
             source_dir: 'puppet:///modules/zabbix_agent/dir/spec',
             source_dir_purge: true,
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
@@ -130,6 +143,7 @@ describe 'zabbix_agent' do
           {
             my_class: 'zabbix_agent::spec',
             options: { 'opt_a' => 'value_a' },
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
@@ -140,6 +154,7 @@ describe 'zabbix_agent' do
         let(:params) do
           {
             service_autorestart: false,
+            package_source: '/opt/package/zabbix_agent.rpm',
           }
         end
 
