@@ -20,7 +20,7 @@ class zabbix_agent::dependencies {
     case $::kernel {
       'Linux': {
         file { "/etc/init.d/${zabbix_agent::service}":
-          ensure  => present,
+          ensure  => file,
           mode    => '0755',
           owner   => 'root',
           group   => 'root',
