@@ -157,9 +157,9 @@ class zabbix_agent (
     'Linux'   => '2_6',
     default   => regsubst($::kernelmajversion, '.' , '_' , 'G' ),
   }
-  $os_arch = $::architecture ? {
+  $os_arch = $facts['os']['architecture'] ? {
     'x86_64' => 'amd64',
-    default  => $::architecture,
+    default  => $facts['os']['architecture'],
   }
 
   $real_config_file = $config_file ? {
@@ -173,7 +173,7 @@ class zabbix_agent (
   }
 
   $real_package_provider = $package_provider ? {
-    ''      => $::operatingsystem ? {
+    ''      => $facts['os']['name'] ? {
       /(?i:Debian|Ubuntu|Mint)/     => 'dpkg',
       /(?i:RedHat|Centos|Scienfic)/ => 'rpm',
       default                       => undef,

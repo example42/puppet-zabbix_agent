@@ -30,6 +30,7 @@ define zabbix_agent::configfile (
 ) {
 
   include zabbix_agent
+  include zabbixagent::install
 
   file { "zabbix_agent_configfile_${name}":
     ensure  => $ensure,
@@ -37,7 +38,7 @@ define zabbix_agent::configfile (
     mode    => $zabbix_agent::config_file_mode,
     owner   => $zabbix_agent::config_file_owner,
     group   => $zabbix_agent::config_file_group,
-    require => Package[$zabbix_agent::package],
+    require => Class['zabbix_agent::install'],
     notify  => $zabbix_agent::manage_service_autorestart,
     content => template($template),
   }
