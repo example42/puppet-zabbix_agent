@@ -47,6 +47,7 @@
 # @param debug Set to 'true' to enable modules debugging
 # @param package_provider The Provider to use for the package resource
 # @param package The name of zabbix_agent package
+# @param package_source The full path and filename. Needed when using dpkg or rpm package provider
 # @param service  The name of zabbix_agent service
 # @param service_status If the zabbix_agent service init script supports status argument
 # @param process The name of zabbix_agent process
@@ -100,6 +101,7 @@ class zabbix_agent (
   String           $data_dir             = '',
   String[1]        $log_dir              = '/var/log/zabbix',
   String[1]        $log_file             = '/var/log/zabbix/zabbix_agentd.log',
+  Optional[Stdlib::Absolutepath] $package_source = undef,
 ){
 
   ### Definition of some variables used in the module
@@ -179,6 +181,10 @@ class zabbix_agent (
       default                       => undef,
     },
     default => $package_provider,
+  }
+
+  if ($real_package_provider in ['rpm', 'dpkg'] and $package_source == undef) {
+    fail('When using rpm/dpkg package provider, you must specify package_source')
   }
 
   ### Managed resources
