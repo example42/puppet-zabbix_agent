@@ -1,6 +1,6 @@
 {
   "name": "example42-zabbix_agent",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "author": "example42",
   "summary": "Puppet module for zabbix_agent",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.19.0 < 7.0.0"
+      "version_requirement": ">= 4.19.0 < 8.0.0"
     }
   ],
   "operatingsystem_support": [
@@ -70,7 +70,7 @@
       "version_requirement": ">= 4.10.0 < 8.0.0"
     }
   ],
-  "pdk-version": "2.0.0",
-  "template-url": "pdk-default#2.0.0",
-  "template-ref": "tags/2.0.0-0-ge838f1d"
+  "pdk-version": "2.1.0",
+  "template-url": "pdk-default#2.1.0",
+  "template-ref": "tags/2.1.0-0-ga675ea5"
 }
