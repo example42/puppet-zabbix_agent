@@ -1,5 +1,7 @@
 # Puppet module: zabbix_agent
 
+This module has been deprecated. You can use https://github.com/voxpupuli/puppet-zabbix as alternative.
+
 Travis {<img src="https://travis-ci.org/example42/puppet-zabbix_agent.png?branch=master" alt="Build Status" />}[https://travis-ci.org/example42/puppet-zabbix_agent]
 
 This is a Puppet module for zabbix_agent compatible with Puppet 4 and newer.
